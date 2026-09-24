@@ -53,7 +53,7 @@ miniapps/
 
 Tools are listed from `startpage/src/app/catalog/tool-registry.ts` with
 localized titles and descriptions. Add a tool once it has a runnable URL.
-Jar Label Maker is listed in the registry and opens at `/tools/kitchen/` inside
+Jar Label Maker is listed in the registry and opens at `/tools/kitchen/jar-labler` inside
 the shell. Other registered tools may link to independently hosted applications.
 
 ## Languages

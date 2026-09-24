@@ -39,7 +39,7 @@ describe('App navigation and localization', () => {
     expect(dropdown.textContent).toContain('Kitchen');
     const labelLink = dropdown.querySelector<HTMLAnchorElement>('a')!;
     expect(labelLink.textContent).toContain('Jar Label Maker');
-    expect(new URL(labelLink.href).pathname).toBe('/tools/kitchen/');
+    expect(new URL(labelLink.href).pathname).toBe('/tools/kitchen/jar-labler');
     expect(new URL(labelLink.href).searchParams.has('lang')).toBe(false);
     expect(router.url).toBe('/');
 
@@ -57,7 +57,7 @@ describe('App navigation and localization', () => {
   it('renders the label tool inside the shell and synchronizes its language', async () => {
     const fixture = TestBed.createComponent(App);
     const router = TestBed.inject(Router);
-    await router.navigateByUrl('/tools/kitchen/');
+    await router.navigateByUrl('/tools/kitchen/jar-labler');
     await fixture.whenStable();
     const root = fixture.nativeElement as HTMLElement;
     expect(root.querySelector('header .brand')?.textContent).toContain('MiniApps');
@@ -66,7 +66,7 @@ describe('App navigation and localization', () => {
     expect(root.querySelector('.app-header select')).toBeNull();
     await router.navigateByUrl('/tools/kitchen');
     await fixture.whenStable();
-    expect(router.url).toBe('/tools/kitchen/');
+    expect(router.url).toBe('/tools/kitchen/jar-labler');
 
     const select = root.querySelector<HTMLSelectElement>('header select')!;
     select.value = 'en';
@@ -78,13 +78,15 @@ describe('App navigation and localization', () => {
     );
   });
 
-  it('redirects the previous label route to the kitchen route', async () => {
+  it('redirects the previous label routes to the current tool route', async () => {
     const fixture = TestBed.createComponent(App);
     const router = TestBed.inject(Router);
-    await router.navigateByUrl('/tools/pickle-label');
-    await fixture.whenStable();
-    expect(router.url).toBe('/tools/kitchen/');
-    expect(fixture.nativeElement.querySelector('lib-pickle-label-ui')).not.toBeNull();
+    for (const oldRoute of ['/tools/pickle-label', '/tools/kitchen', '/tools/kitchen/']) {
+      await router.navigateByUrl(oldRoute);
+      await fixture.whenStable();
+      expect(router.url).toBe('/tools/kitchen/jar-labler');
+      expect(fixture.nativeElement.querySelector('lib-pickle-label-ui')).not.toBeNull();
+    }
   });
   it('lists registered apps and closes when focus leaves the collection', async () => {
     TestBed.overrideProvider(TOOL_REGISTRY, {

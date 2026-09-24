@@ -14,7 +14,7 @@ dependencies, and running its own start and build commands.
 
 After a tool has a runnable URL, add its metadata in Russian, English, Lithuanian, and Polish to
 `startpage/src/app/catalog/tool-registry.ts` so it appears in Collection.
-The shell hosts Jar Label Maker at `/tools/kitchen/` by consuming its built
+The shell hosts Jar Label Maker at `/tools/kitchen/jar-labler` by consuming its built
 `@miniapps/pickle-label-ui` Angular package. The app's own `App` component uses
 that same package for standalone operation. The shell never imports MiniApp source.
 Other catalog entries may use regular links to same-origin or independently hosted tools.

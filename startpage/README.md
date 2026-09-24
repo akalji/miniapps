@@ -18,8 +18,8 @@ Production output: `dist/startpage/browser/`.
 Routes:
 
 - `/`: home page
-- `/tools/kitchen/`: Jar Label Maker inside the shell
-- `/tools/pickle-label`: redirects to the kitchen tool route
+- `/tools/kitchen/jar-labler`: Jar Label Maker inside the shell
+- `/tools/kitchen/` and `/tools/pickle-label`: redirect to the kitchen tool route
 - `/tools` and other unmatched paths redirect to `/`.
 
 The registry contains metadata and URLs, not MiniApp implementations.

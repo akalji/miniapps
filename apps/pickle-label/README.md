@@ -31,6 +31,6 @@ standalone app and reusable library. The build produces the independent app in
 
 `projects/pickle-label-ui/` contains the public Angular package. It owns the label
 editor, preview, QR generation and image scanning code. The shell consumes the
-built package on `/tools/kitchen/`, passing its active language through the
+built package on `/tools/kitchen/jar-labler`, passing its active language through the
 component API. The shell build and dev scripts build and sync the package
 automatically; do not import this app's source files into `startpage/`.

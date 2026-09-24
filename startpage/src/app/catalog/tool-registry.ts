@@ -15,7 +15,7 @@ export const tools: readonly ToolDefinition[] = [
   {
     id: 'pickle-label',
     category: 'kitchen',
-    url: '/tools/kitchen/',
+    url: '/tools/kitchen/jar-labler',
     title: {
       ru: 'Этикетки для банок',
       en: 'Jar Label Maker',
