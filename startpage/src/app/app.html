@@ -1,0 +1,34 @@
+﻿<a class="skip-link" href="#main-content">{{ i18n.text().skipToContent }}</a>
+<header>
+  <div class="header-inner">
+    <a class="brand" routerLink="/">MiniApps</a>
+    <nav [attr.aria-label]="i18n.text().navigation">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        ariaCurrentWhenActive="page"
+        >{{ i18n.text().home }}</a
+      >
+      <app-collection-menu />
+    </nav>
+    <label class="language">
+      <span>{{ i18n.text().language }}</span>
+      <select [ngModel]="i18n.language()" (ngModelChange)="i18n.setLanguage($event)">
+        @for (option of languages; track option.code) {
+          <option [value]="option.code" [lang]="option.code">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+  </div>
+</header>
+<main id="main-content" tabindex="-1">
+  <router-outlet />
+</main>
+<footer>
+  <p lang="en">We do what we must because we can (c)</p>
+  <a class="github-link" href="https://github.com/akalji/miniapps">
+    <img src="github-mark.svg" width="20" height="20" alt="" />
+    <span>GitHub</span>
+  </a>
+</footer>

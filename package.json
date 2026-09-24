@@ -1,0 +1,39 @@
+{
+  "name": "miniapps",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "node scripts/dev.mjs",
+    "start:shell": "npm run build:label-lib && ng serve startpage",
+    "build:label-lib": "npm --prefix apps/pickle-label run build:lib",
+    "build": "npm --prefix apps/pickle-label run build:lib && ng build startpage && npm --prefix apps/pickle-label run build -- --configuration production,hosted && node scripts/assemble.mjs",
+    "build:shell": "npm run build:label-lib && ng build startpage",
+    "watch": "npm run build:label-lib && ng build startpage --watch --configuration development",
+    "test": "npm --prefix apps/pickle-label run build:lib && ng test startpage"
+  },
+  "private": true,
+  "license": "Apache-2.0",
+  "packageManager": "npm@11.17.0",
+  "dependencies": {
+    "@miniapps/pickle-label-ui": "file:apps/pickle-label/projects/pickle-label-ui",
+    "@angular/common": "^22.2.0",
+    "@angular/compiler": "^22.2.0",
+    "@angular/core": "^22.2.0",
+    "@angular/forms": "^22.2.0",
+    "@angular/platform-browser": "^22.2.0",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4",
+    "@angular/router": "^22.2.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.2.0",
+    "@angular/cli": "^22.2.0",
+    "@angular/compiler-cli": "^22.2.0",
+    "jsdom": "^30.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2",
+    "vitest": "^5.0.0"
+  }
+}

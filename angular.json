@@ -1,0 +1,84 @@
+﻿{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm",
+    "analytics": false
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "startpage": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "startpage",
+      "sourceRoot": "startpage/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "startpage/src/main.ts",
+            "tsConfig": "startpage/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "preserveSymlinks": true,
+            "allowedCommonJsDependencies": ["jsqr", "qrcode"],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "startpage/public"
+              }
+            ],
+            "styles": ["startpage/src/styles.scss"],
+            "index": "startpage/src/index.html"
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "startpage/proxy.conf.json",
+            "prebundle": { "exclude": ["@miniapps/pickle-label-ui"] }
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "startpage:build:production"
+            },
+            "development": {
+              "buildTarget": "startpage:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+﻿html {
+  font-family: system-ui, sans-serif;
+  color: #172033;
+  background: #f8fafc;
+  line-height: 1.6;
+}
+
+body { margin: 0; }
+* { box-sizing: border-box; }
+a { color: #1d4ed8; }
+:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+@media print {
+  @page { size: A4 portrait; margin: 10mm; }
+}

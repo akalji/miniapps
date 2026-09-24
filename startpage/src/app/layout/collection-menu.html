@@ -1,0 +1,30 @@
+<button
+  #trigger
+  type="button"
+  [attr.aria-expanded]="open()"
+  aria-controls="collection-items"
+  (click)="open.set(!open())"
+>
+  {{ i18n.text().collection }}
+  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" [class.expanded]="open()">
+    <path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" />
+  </svg>
+</button>
+<div id="collection-items" class="dropdown" [hidden]="!open()">
+  @if (tools.length) {
+    @for (category of categories; track category) {
+      <section [attr.aria-labelledby]="'category-' + category">
+        <h2 [id]="'category-' + category">{{ i18n.text()[category] }}</h2>
+        <ul>
+          @for (tool of tools; track tool.id) {
+            @if (tool.category === category) {
+              <li><a [href]="toolUrl(tool)" (click)="open.set(false)">{{ tool.title[i18n.language()] }}</a></li>
+            }
+          }
+        </ul>
+      </section>
+    }
+  } @else {
+    <p>{{ i18n.text().collectionEmpty }}</p>
+  }
+</div>

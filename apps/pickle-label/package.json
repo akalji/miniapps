@@ -1,0 +1,38 @@
+{
+  "name": "pickle-label",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "npm run build:lib && ng serve --port 4201",
+    "build": "npm run build:lib && ng build pickle-label",
+    "build:lib": "ng build pickle-label-ui && node scripts/sync-library.mjs",
+    "watch": "npm run build:lib && ng build pickle-label --watch --configuration development",
+    "test": "npm run build:lib && ng test pickle-label && ng test pickle-label-ui"
+  },
+  "private": true,
+  "license": "Apache-2.0",
+  "packageManager": "npm@11.17.0",
+  "dependencies": {
+    "@miniapps/pickle-label-ui": "file:projects/pickle-label-ui",
+    "@angular/common": "^22.2.0",
+    "@angular/compiler": "^22.2.0",
+    "@angular/core": "^22.2.0",
+    "@angular/forms": "^22.2.0",
+    "@angular/platform-browser": "^22.2.0",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.2.0",
+    "@angular/cli": "^22.2.0",
+    "@angular/compiler-cli": "^22.2.0",
+    "@types/qrcode": "^1.5.6",
+    "jsdom": "^30.0.0",
+    "ng-packagr": "^22.2.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2",
+    "vitest": "^5.0.0"
+  }
+}
