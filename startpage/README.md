@@ -19,8 +19,7 @@ Routes:
 
 - `/`: home page
 - `/tools/kitchen/jar-labler`: Jar Label Maker inside the shell
-- `/tools/kitchen/` and the legacy `/tools/pickle-label`: redirect to the kitchen tool route
-- `/tools` and other unmatched paths redirect to `/`.
+- `/tools` and all unmatched paths redirect to `/`.
 
 The registry contains metadata and URLs, not MiniApp implementations.
 The Collection button in the navigation opens a dropdown of registered apps

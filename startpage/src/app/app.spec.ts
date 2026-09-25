@@ -64,10 +64,6 @@ describe('App navigation and localization', () => {
     expect(root.querySelector('lib-jar-labler')).not.toBeNull();
     expect(root.querySelector('.app-header h1')?.textContent).toContain('Этикетки для банок');
     expect(root.querySelector('.app-header select')).toBeNull();
-    await router.navigateByUrl('/tools/kitchen');
-    await fixture.whenStable();
-    expect(router.url).toBe('/tools/kitchen/jar-labler');
-
     const select = root.querySelector<HTMLSelectElement>('header select')!;
     select.value = 'en';
     select.dispatchEvent(new Event('change'));
@@ -78,16 +74,6 @@ describe('App navigation and localization', () => {
     );
   });
 
-  it('redirects the previous label routes to the current tool route', async () => {
-    const fixture = TestBed.createComponent(App);
-    const router = TestBed.inject(Router);
-    for (const oldRoute of ['/tools/pickle-label', '/tools/kitchen', '/tools/kitchen/']) {
-      await router.navigateByUrl(oldRoute);
-      await fixture.whenStable();
-      expect(router.url).toBe('/tools/kitchen/jar-labler');
-      expect(fixture.nativeElement.querySelector('lib-jar-labler')).not.toBeNull();
-    }
-  });
   it('lists registered apps and closes when focus leaves the collection', async () => {
     TestBed.overrideProvider(TOOL_REGISTRY, {
       useValue: [
