@@ -3,7 +3,7 @@
 Independent tools belong in `apps/<tool-id>/`. For now these are ordinary folders
 in this repository. A tool can later be extracted into its own Git repository
 and connected as a Git submodule. Jar Label Maker is the first MiniApp
-(internal app ID: `pickle-label`).
+(internal app ID: `jar-labler`).
 
 Each tool must have its own `package.json`, README, build commands, and tests
 where appropriate. It must build and run without the startpage application
@@ -15,7 +15,7 @@ dependencies, and running its own start and build commands.
 After a tool has a runnable URL, add its metadata in Russian, English, Lithuanian, and Polish to
 `startpage/src/app/catalog/tool-registry.ts` so it appears in Collection.
 The shell hosts Jar Label Maker at `/tools/kitchen/jar-labler` by consuming its built
-`@miniapps/pickle-label-ui` Angular package. The app's own `App` component uses
+`@miniapps/jar-labler-ui` Angular package. The app's own `App` component uses
 that same package for standalone operation. The shell never imports MiniApp source.
 Other catalog entries may use regular links to same-origin or independently hosted tools.
 

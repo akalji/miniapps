@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
@@ -7,33 +7,32 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "startpage": {
+    "jar-labler": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
-      "root": "startpage",
-      "sourceRoot": "startpage/src",
+      "root": "",
+      "sourceRoot": "src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "startpage/src/main.ts",
-            "tsConfig": "startpage/tsconfig.app.json",
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "preserveSymlinks": true,
-            "allowedCommonJsDependencies": ["jsqr", "qrcode"],
             "assets": [
               {
                 "glob": "**/*",
-                "input": "startpage/public"
+                "input": "public"
               }
             ],
-            "styles": ["startpage/src/styles.scss"],
-            "index": "startpage/src/index.html"
+            "styles": ["src/styles.scss"],
+            "index": "src/index.html",
+            "allowedCommonJsDependencies": ["qrcode", "jsqr"]
           },
           "configurations": {
             "production": {
@@ -45,7 +44,7 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
+                  "maximumWarning": "6kB",
                   "maximumError": "8kB"
                 }
               ],
@@ -55,28 +54,57 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "hosted": {
+              "baseHref": "/apps/jar-labler/"
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-          "options": {
-            "proxyConfig": "startpage/proxy.conf.json",
-            "prebundle": { "exclude": ["@miniapps/jar-labler-ui"] }
-          },
           "configurations": {
             "production": {
-              "buildTarget": "startpage:build:production"
+              "buildTarget": "jar-labler:build:production"
             },
             "development": {
-              "buildTarget": "startpage:build:development"
+              "buildTarget": "jar-labler:build:development"
+            },
+            "hosted": {
+              "buildTarget": "jar-labler:build:development,hosted",
+              "servePath": "/apps/jar-labler/"
             }
           },
           "defaultConfiguration": "development"
         },
         "test": {
           "builder": "@angular/build:unit-test"
+        }
+      }
+    },
+    "jar-labler-ui": {
+      "projectType": "library",
+      "root": "projects/jar-labler-ui",
+      "sourceRoot": "projects/jar-labler-ui/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/jar-labler-ui/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/jar-labler-ui/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/jar-labler-ui/tsconfig.spec.json"
+          }
         }
       }
     }

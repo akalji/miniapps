@@ -1,135 +1,141 @@
-# Правила разработки MiniApps
+# MiniApps Development Guidelines
 
-## Область действия и контекст
+## Scope and Context
 
-- Этот файл задаёт общие правила для репозитория. Перед изменениями прочитай его,
-  `context.md` и инструкции `AGENTS.md` в затрагиваемых каталогах, если они есть.
-- Более локальные инструкции уточняют правила своего приложения. Явные указания
-  пользователя имеют приоритет. При противоречиях со старыми разделами `context.md`
-  используй актуальные решения ниже и обновляй документацию.
-- Общайся с пользователем на русском. Идентификаторы в коде пиши на английском.
-- Сначала изучи существующий код. Делай небольшие изменения в рамках задачи,
-  сохраняй правки пользователя и не переписывай работающий код без необходимости.
+- This file defines repository-wide rules. Before making changes, read this file,
+  `context.md`, and any `AGENTS.md` files in affected directories.
+- More specific instructions may refine the rules for an app. Explicit user
+  instructions take precedence. If they conflict with outdated sections of
+  `context.md`, follow the current decisions below and update the documentation.
+- Communicate with the user in Russian. Use English for identifiers in code.
+- Study the existing code first. Make small, task-scoped changes, preserve user
+  edits, and do not rewrite working code without a good reason.
 
-## Текущая цель и архитектура
+## Current Goal and Architecture
 
-- MVP: основа платформы и одна полноценная MiniApp. Первое запланированное
-  приложение — генератор этикеток для заготовок (`pickle-label`).
-- `startpage/` — оболочка: меню, выбор языка, футер, главная и реестр приложений.
-  Корневые `package.json`, `angular.json` и `tsconfig.json` обслуживают оболочку.
-- Главная пока пустая, до разработки дизайна. Collection — выпадающее меню,
-  а не ссылка на страницу каталога. Старый `/tools` перенаправляется на `/`.
-- `apps/<app-id>/` — весь контекст конкретной MiniApp: код, переводы, ресурсы,
-  тесты, README, зависимости, lock-файл и конфигурация сборки.
-- Сейчас MiniApps могут быть обычными папками этого репозитория. Отдельные
-  репозитории и Git submodules откладываем до необходимости выделить приложение.
-- Каждая MiniApp должна запускаться и собираться из своей папки. Проверка
-  независимости: скопировать папку отдельно, установить зависимости, запустить
-  и собрать без `startpage/` и корневых конфигураций платформы.
-- Не импортируй исходники оболочки в MiniApp, MiniApp в оболочку или код соседней
-  MiniApp. Для интеграции оболочка может подключать только собранный публичный
-  Angular-пакет, принадлежащий MiniApp; не используй для этого исходники,
-  относительные пути или TypeScript aliases.
-- Оболочка хранит только метаданные и URL приложений в
-  `startpage/src/app/catalog/tool-registry.ts`; приложение владеет своей логикой.
-- Pickle Label интегрируется через пакет `@miniapps/pickle-label-ui`, который
-  собирается из `apps/pickle-label/` и используется как автономным приложением,
-  так и маршрутом оболочки. Оболочка сохраняет собственные меню и локализацию;
-  язык передаётся в компонент через публичные inputs. Не вводи iframe, Web Components
-  или Module Federation для этой интеграции.
-- Делай самый простой рабочий вариант. Общий пакет выделяй только при доказанной
-  необходимости переиспользования, а не из-за внешнего сходства компонентов.
-- Не добавляй backend, БД, NgRx, Docker, CI/CD или новые библиотеки без конкретной
-  задачи. Основной хостинг — статические файлы на VPS с nginx и SPA fallback.
+- MVP: the platform foundation and one complete MiniApp. The first planned app is
+  a label maker for homemade preserves (`jar-labler`).
+- `startpage/` is the shell: menu, language selector, footer, home page, and app
+  registry. The root `package.json`, `angular.json`, and `tsconfig.json` serve the shell.
+- The home page remains empty until its design is ready. Collection is a dropdown,
+  not a link to a catalog page. The old `/tools` route redirects to `/`.
+- `apps/<app-id>/` contains the full context for a MiniApp: code, translations,
+  assets, tests, README, dependencies, lockfile, and build configuration.
+- MiniApps may currently be regular folders in this repository. Separate
+  repositories and Git submodules are deferred until an app needs to be split out.
+- Every MiniApp must run and build from its own directory. To verify independence,
+  copy the directory elsewhere, install its dependencies, then run and build it
+  without `startpage/` or the platform's root configuration.
+- Do not import shell source into a MiniApp, MiniApp source into the shell, or code
+  from a neighboring MiniApp. For integration, the shell may consume only a built,
+  public Angular package owned by the MiniApp. Do not use its source, relative
+  paths, or TypeScript aliases for integration.
+- The shell stores only app metadata and URLs in
+  `startpage/src/app/catalog/tool-registry.ts`; each app owns its own behavior.
+- Jar Labler is integrated through `@miniapps/jar-labler-ui`, built from
+  `apps/jar-labler/` and used by both the standalone app and the shell route. The
+  shell keeps its own menu and localization; it passes the language through a
+  public component input. Do not use an iframe, Web Components, or Module
+  Federation for this integration.
+- Choose the simplest working approach. Extract a shared package only when there
+  is a proven need for reuse, not just because components look similar.
+- Do not add a backend, database, NgRx, Docker, CI/CD, or new libraries without a
+  concrete task. The primary hosting target is static files on a VPS with nginx
+  and an SPA fallback.
 
 ## Angular
 
-- Используй Angular 22+, standalone-компоненты, Angular Router и современные API.
-  Не вводи NgModule-архитектуру ради разделения кода на функциональные каталоги.
-- Для локального состояния используй signals, для производных значений — computed.
-  Не дублируй вычисляемое состояние и не заменяй computed побочными эффектами.
-- Используй `inject()` согласно существующему стилю. Доступное только шаблону
-  помечай `protected`, детали реализации — `private`, неизменяемые ссылки — `readonly`.
-- Используй `@if` и `@for`; для списков указывай стабильный `track`.
-- Отделяй доменную логику от компонентов и оформления. Шаблоны должны оставаться
-  простыми; значительную логику выноси в функции или небольшие сервисы.
-- RxJS используй, когда нужны потоки, без лишних подписок и вложенных subscribe.
-  Управляй временем жизни подписок через async pipe или `takeUntilDestroyed`.
-- Доступ к браузерным API делай осознанно. Недоступность localStorage не должна
-  ломать интерфейс. Предпочитай Angular bindings прямым изменениям DOM.
-- Сохраняй адаптивность, семантический HTML, видимый фокус и управление клавиатурой.
-  Навигация — ссылки, действия — кнопки. Dropdown должен работать касанием,
-  закрываться по Escape и клику снаружи, корректно обрабатывать фокус.
+- Use Angular 22+, standalone components, Angular Router, and modern APIs. Do not
+  introduce an NgModule architecture just to split code into feature directories.
+- Use signals for local state and `computed` for derived values. Do not duplicate
+  derived state or replace `computed` with side effects.
+- Use `inject()` in keeping with the existing style. Mark template-only members
+  `protected`, implementation details `private`, and immutable references `readonly`.
+- Use `@if` and `@for`; provide a stable `track` expression for lists.
+- Separate domain logic from components and presentation. Keep templates simple;
+  move substantial logic into functions or small services.
+- Use RxJS when streams are needed, without unnecessary subscriptions or nested
+  `subscribe` calls. Manage subscription lifetimes with the async pipe or
+  `takeUntilDestroyed`.
+- Use browser APIs deliberately. The UI must continue working when localStorage
+  is unavailable. Prefer Angular bindings over direct DOM changes.
+- Preserve responsive layouts, semantic HTML, visible focus, and keyboard
+  interaction. Use links for navigation and buttons for actions. Dropdowns must
+  work with touch, close on Escape and outside clicks, and handle focus correctly.
 
-## TypeScript и форматирование
+## TypeScript and Formatting
 
-- Соблюдай `.editorconfig` и `.prettierrc`: отступ 2 пробела, одинарные кавычки
-  в TypeScript, точки с запятой, целевая ширина строки 100 символов.
-  Форматируй изменённые файлы; не переформатируй весь проект попутно.
-- Имена файлов и каталогов — `kebab-case`; классов, интерфейсов и типов —
-  `PascalCase`; переменных, функций и свойств — `camelCase`.
-  Для настоящих глобальных констант и injection tokens используй `UPPER_SNAKE_CASE`.
-- Не добавляй префикс `I` к интерфейсам. Предпочитай понятные имена сокращениям;
-  булевы значения называй по смыслу, например `isValid`, `hasItems`, `canSubmit`.
-- Используй `const` по умолчанию, `let` только при переназначении; не используй `var`.
-- Предпочитай вывод типов для очевидных локальных значений. Явно описывай контракты
-  данных, аргументы функций и возвращаемые типы публичных API, где это улучшает ясность.
-- Используй `interface` для объектных контрактов, `type` для unions, aliases
-  и преобразований типов. Не меняй существующие объявления только ради этого правила.
-- Избегай `any`: внешние данные принимай как `unknown`, затем проверяй и сужай тип.
-  JSON из QR, URL, хранилища или сети требует проверки во время исполнения;
-  `as SomeType` не заменяет валидацию.
-- Не подавляй ошибки через `@ts-ignore`, двойные приведения или бездоказательные `!`.
-  Обрабатывай `null` и `undefined` явно; для значений по умолчанию предпочитай `??`,
-  если `0`, `false` или пустая строка являются допустимыми значениями.
-- Предпочитай string unions и `as const` для небольших фиксированных наборов.
-  Используй `readonly` для данных, которые не должны изменяться через этот контракт.
-- Пиши небольшие функции с явными зависимостями, ранними возвратами и `===` / `!==`.
-  Не вводи абстракции под гипотетические задачи.
-- Обрабатывай Promise и ошибки асинхронных операций. Пустой catch допустим только
-  для ожидаемого безопасного fallback с пояснением, как в обработке localStorage.
-- Комментарии объясняют причины и ограничения, а не пересказывают код.
-- Не ослабляй проверки TypeScript и Angular ради прохождения сборки. Для новых
-  самостоятельных приложений включай `strict` и `strictTemplates`. Эти флаги
-  не считаются уже включёнными в оболочке: проверяй фактический tsconfig.
+- Follow `.editorconfig` and `.prettierrc`: two-space indentation, single quotes
+  in TypeScript, semicolons, and a target line width of 100 characters. Format
+  changed files; do not reformat the whole project as a side effect.
+- Use `kebab-case` for file and directory names; `PascalCase` for classes,
+  interfaces, and types; and `camelCase` for variables, functions, and properties.
+  Use `UPPER_SNAKE_CASE` for true global constants and injection tokens.
+- Do not prefix interfaces with `I`. Prefer clear names over abbreviations; name
+  booleans by meaning, for example `isValid`, `hasItems`, and `canSubmit`.
+- Prefer `const`; use `let` only when reassignment is needed. Do not use `var`.
+- Prefer inferred types for obvious local values. Explicitly describe data
+  contracts and public API arguments and return types where it improves clarity.
+- Use `interface` for object contracts and `type` for unions, aliases, and
+  transformations. Do not change existing declarations solely to satisfy this rule.
+- Avoid `any`: accept external data as `unknown`, then validate and narrow it.
+  JSON from QR codes, URLs, storage, or the network requires runtime validation;
+  `as SomeType` is not a substitute for validation.
+- Do not suppress errors with `@ts-ignore`, double casts, or unjustified `!`.
+  Handle `null` and `undefined` explicitly. Prefer `??` for defaults when `0`,
+  `false`, or an empty string are valid values.
+- Prefer string unions and `as const` for small fixed sets. Use `readonly` for
+  data that should not be changed through that contract.
+- Write small functions with explicit dependencies, early returns, and `===` /
+  `!==`. Do not introduce abstractions for hypothetical needs.
+- Handle Promises and asynchronous errors. An empty `catch` is allowed only for an
+  expected safe fallback with an explanation, as in localStorage handling.
+- Comments should explain reasons and constraints, not restate the code.
+- Do not weaken TypeScript or Angular checks to make a build pass. Enable `strict`
+  and `strictTemplates` for new standalone apps. Do not assume these flags are
+  enabled in the shell; check the actual tsconfig.
 
-## Локализация
+## Localization
 
-- Поддерживаемые языки: русский (`ru`), английский (`en`), литовский (`lt`), польский (`pl`).
-- Приоритет: сохранённый ручной выбор → первый поддерживаемый язык браузера → английский.
-  Учитывай региональные теги, например `pl-PL`; обновляй атрибут `html.lang`.
-- Все обычные пользовательские тексты должны иметь ключи перевода. Собственные
-  имена и согласованная английская цитата в футере могут оставаться без перевода.
-- Каждая MiniApp владеет своим пакетом переводов и не импортирует сервис оболочки.
-- Сейчас оболочка использует типизированные словари и собственный LanguageService
-  на signals. Это не встроенный Angular i18n и не Transloco.
-- Обсуждённое направление развития — key-value словари по языкам и готовая библиотека
-  вроде Transloco. Миграция ещё не выполнена; не делай её попутно с другой задачей.
-- При добавлении ключей обновляй все четыре языка. Проверяй длинные надписи
-  и мобильную раскладку; не храни дублирующиеся списки поддерживаемых языков.
+- Supported languages are Russian (`ru`), English (`en`), Lithuanian (`lt`), and
+  Polish (`pl`).
+- Language priority: saved manual choice, then the first supported browser
+  language, then English. Handle regional tags such as `pl-PL`; update `html.lang`.
+- All ordinary user-facing text must have translation keys. Proper names and an
+  approved English quote in the footer may remain untranslated.
+- Each MiniApp owns its translation package and must not import the shell's service.
+- The shell currently uses typed dictionaries and its own signal-based
+  `LanguageService`. It does not use built-in Angular i18n or Transloco.
+- The discussed direction is key-value dictionaries per language and a library
+  such as Transloco. Migration has not happened; do not include it in unrelated work.
+- When adding translation keys, update all four languages. Check long labels and
+  mobile layout; do not maintain duplicate lists of supported languages.
 
-## Первый инструмент и QR
+## First Tool and QR
 
-- Генератор формирует читаемый UTF-8 JSON и кодирует его непосредственно в QR.
-  Не минифицируй и не сжимай payload по умолчанию.
-- Payload содержит `type` и `version`; версия схемы независима от версии приложения.
-- Проверяй входные данные и размер payload в байтах. Читаемость печатного QR важнее
-  максимальной ёмкости. Не объявляй успешное сканирование на телефоне без проверки.
+- The generator creates readable UTF-8 JSON and encodes it directly in the QR
+  code. Do not minify or compress the payload by default.
+- The payload contains `type` and `version`; the schema version is independent of
+  the app version.
+- Validate input and payload size in bytes. Readability of printed QR codes is
+  more important than maximum capacity. Do not claim successful phone scanning
+  without verifying it.
 
-## Проверки и завершение задачи
+## Checks and Completion
 
-- Перед изменением архитектуры объясни существенные варианты и компромиссы.
-  Не вводи архитектурные изменения молча.
-- Из корня: `npm ci` — установка; `npm start` — оболочка и MiniApp;
-  `npm test -- --watch=false` — тесты оболочки; `npm run build` — production-сборка.
-  Сборка пакета и оболочки размещается в `dist/startpage/browser/`.
-- Для MiniApp выполняй команды из её папки и описывай их в её README.
-- После изменений кода запускай релевантные тесты и production-сборку.
-  Для изменений только документации достаточно проверить текст и ссылки.
-- Тестируй поведение: маршруты, пользовательские действия, локализацию,
-  валидацию и ошибки. Не создавай тесты, лишь повторяющие реализацию,
-  или отдельные тесты ради простой обратимой правки стилей/текста.
-- Не выдавай успешную сборку за визуальную проверку или проверку на телефоне.
-  В отчёте укажи результат, выполненные проверки и оставшиеся ограничения.
-- Сохраняй LICENSE, NOTICE и лицензии сторонних ресурсов. Обновляй документацию,
-  когда меняются команды запуска, структура или архитектурные договорённости.
+- Before changing architecture, explain significant options and tradeoffs. Do not
+  introduce architectural changes silently.
+- From the repository root: `npm ci` installs dependencies; `npm start` runs the
+  shell and MiniApp; `npm test -- --watch=false` runs shell tests; `npm run build`
+  creates a production build. The shell and package output is under
+  `dist/startpage/browser/`.
+- Run MiniApp commands from its own directory and document them in its README.
+- After code changes, run relevant tests and a production build. For documentation-
+  only changes, checking the text and links is sufficient.
+- Test behavior: routes, user actions, localization, validation, and errors. Do
+  not create tests that merely repeat the implementation or add separate tests
+  for simple, reversible style/text changes.
+- Do not present a successful build as visual verification or a phone test. Report
+  the result, checks performed, and any remaining limitations.
+- Preserve LICENSE, NOTICE, and third-party asset licenses. Update documentation
+  when commands, structure, or architectural agreements change.

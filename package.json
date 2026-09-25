@@ -5,17 +5,17 @@
     "ng": "ng",
     "start": "node scripts/dev.mjs",
     "start:shell": "npm run build:label-lib && ng serve startpage",
-    "build:label-lib": "npm --prefix apps/pickle-label run build:lib",
-    "build": "npm --prefix apps/pickle-label run build:lib && ng build startpage && npm --prefix apps/pickle-label run build -- --configuration production,hosted && node scripts/assemble.mjs",
+    "build:label-lib": "npm --prefix apps/jar-labler run build:lib",
+    "build": "npm --prefix apps/jar-labler run build:lib && ng build startpage && npm --prefix apps/jar-labler run build -- --configuration production,hosted && node scripts/assemble.mjs",
     "build:shell": "npm run build:label-lib && ng build startpage",
     "watch": "npm run build:label-lib && ng build startpage --watch --configuration development",
-    "test": "npm --prefix apps/pickle-label run build:lib && ng test startpage"
+    "test": "npm --prefix apps/jar-labler run build:lib && ng test startpage"
   },
   "private": true,
   "license": "Apache-2.0",
   "packageManager": "npm@11.17.0",
   "dependencies": {
-    "@miniapps/pickle-label-ui": "file:apps/pickle-label/projects/pickle-label-ui",
+    "@miniapps/jar-labler-ui": "file:apps/jar-labler/projects/jar-labler-ui",
     "@angular/common": "^22.2.0",
     "@angular/compiler": "^22.2.0",
     "@angular/core": "^22.2.0",

@@ -19,7 +19,7 @@ Routes:
 
 - `/`: home page
 - `/tools/kitchen/jar-labler`: Jar Label Maker inside the shell
-- `/tools/kitchen/` and `/tools/pickle-label`: redirect to the kitchen tool route
+- `/tools/kitchen/` and the legacy `/tools/pickle-label`: redirect to the kitchen tool route
 - `/tools` and other unmatched paths redirect to `/`.
 
 The registry contains metadata and URLs, not MiniApp implementations.
@@ -28,13 +28,13 @@ without navigating. It supports touch, keyboard focus, Escape, and outside-click
 There is no separate catalog page; entries come from `src/app/catalog/tool-registry.ts`.
 Add a tool's ID, title and description in all supported languages, and its URL
 to list it in the catalog. Jar Label Maker's route uses its built Angular library
-package; the standalone app remains under `../apps/pickle-label/`.
+package; the standalone app remains under `../apps/jar-labler/`.
 
 Shell languages: Russian, English, Lithuanian, and Polish.
 Startup priority: saved manual choice, first supported browser language, English.
 
 Shell translations live in `src/app/core/i18n/translations.ts`.
-MiniApps do not import this localization service. Pickle Label accepts the shell
+MiniApps do not import this localization service. Jar Label Maker accepts the shell
 language through the public library component inputs.
 
 The footer quote stays in its original English across locales.

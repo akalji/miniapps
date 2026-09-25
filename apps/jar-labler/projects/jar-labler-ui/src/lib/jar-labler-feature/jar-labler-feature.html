@@ -1,0 +1,285 @@
+<div class="app-shell">
+  <header class="app-header no-print">
+    <div>
+      <p class="eyebrow">{{ i18n.text().kitchen }}</p>
+      <h1>{{ i18n.text().title }}</h1>
+    </div>
+    @if (!embedded) {
+      <label class="language"
+        ><span>{{ i18n.text().language }}</span>
+        <select [ngModel]="i18n.language()" (ngModelChange)="changeLanguage($event)">
+          @for (language of languages; track language.code) {
+            <option [value]="language.code" [lang]="language.code">{{ language.label }}</option>
+          }
+        </select>
+      </label>
+    }
+  </header>
+  <p class="subtitle no-print">{{ i18n.text().subtitle }}</p>
+  <input #scanInput class="sr-only" type="file" accept="image/*" (change)="scanImage($event)" />
+  <div class="scan-actions no-print">
+    <button class="scan-button" type="button" (click)="startCamera()" [disabled]="isCameraActive()">
+      <span>{{ i18n.text().scan }}</span>
+    </button>
+    <button class="image-scan-button" type="button" (click)="scanInput.click()">
+      {{ i18n.text().scanImage }}
+    </button>
+  </div>
+  <section class="camera-panel panel no-print" [hidden]="!isCameraActive()" aria-label="{{ i18n.text().cameraView }}">
+    <video #cameraVideo autoplay muted playsinline [attr.aria-label]="i18n.text().cameraView"></video>
+    <button class="image-scan-button" type="button" (click)="stopCamera()">{{ i18n.text().stopCamera }}</button>
+  </section>
+  @if (scanError(); as scanErrorKey) {
+    <p class="error no-print" role="alert">{{ i18n.text()[scanErrorKey] }}</p>
+  }
+  @if (scannedLabel(); as scanned) {
+    <section
+      class="scanned-label panel no-print"
+      aria-labelledby="scanned-title"
+      aria-live="polite"
+    >
+      <h2 id="scanned-title">{{ i18n.text().scanSuccess }}</h2>
+      <dl>
+        @for (field of scanned.fields; track $index) {
+          <div>
+            <dt>{{ field.key }}</dt>
+            <dd>{{ field.value }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+  }
+
+  <section class="app-description panel no-print" aria-labelledby="app-description-title">
+    <h2 id="app-description-title">{{ i18n.text().aboutTitle }}</h2>
+    <p>{{ i18n.text().aboutDescription }}</p>
+  </section>
+
+  <main class="workspace">
+    <section class="editor panel no-print" aria-labelledby="create-title">
+      <label class="template-select"
+        >{{ i18n.text().template }}
+        <select
+          [ngModel]="selectedTemplate()"
+          (ngModelChange)="selectTemplate($event)"
+          name="label-template"
+        >
+          @for (template of templates; track template) {
+            <option [value]="template">
+              {{ template === 'standard' ? i18n.text().standardTemplate : i18n.text().blankTemplate }}
+            </option>
+          }
+        </select>
+      </label>
+      <h2 id="create-title">{{ i18n.text().create }}</h2>
+      <p class="muted">{{ i18n.text().fieldsHint }}</p>
+      <div class="fields">
+        @for (field of fields(); track field.id; let index = $index) {
+          <div class="field-row">
+            <span class="field-number" aria-hidden="true">{{ index + 1 }}</span>
+            <label
+              >{{ i18n.text().key }}
+              <input
+                #keyInput
+                type="text"
+                [value]="field.key"
+                [placeholder]="i18n.text().keyPlaceholder"
+                (input)="updateField(field.id, 'key', keyInput.value)"
+                maxlength="80"
+              />
+            </label>
+            <label
+              >{{ i18n.text().value }}
+              <textarea
+                #valueInput
+                rows="2"
+                [value]="field.value"
+                [placeholder]="i18n.text().valuePlaceholder"
+                (input)="updateField(field.id, 'value', valueInput.value)"
+                maxlength="1500"
+              ></textarea>
+            </label>
+            <label class="print-field-toggle">
+              <input
+                #printToggle
+                type="checkbox"
+                [checked]="field.showInPrint !== false"
+                (change)="togglePrintVisibility(field.id, printToggle.checked)"
+              />
+              <span>{{ i18n.text().showOnLabel }}</span>
+            </label>
+            <button
+              class="remove-button"
+              type="button"
+              (click)="removeField(field.id)"
+              [attr.aria-label]="i18n.text().remove + ' ' + (index + 1)"
+              [title]="i18n.text().remove"
+            >
+              ×
+            </button>
+          </div>
+        }
+      </div>
+      <p class="muted qr-hidden-hint">{{ i18n.text().qrIncludesHidden }}</p>
+      <button
+        class="add-button"
+        type="button"
+        (click)="addField()"
+        [disabled]="fields().length >= maxFields"
+      >
+        <span aria-hidden="true">＋</span> {{ i18n.text().add }}
+      </button>
+      @if (error(); as errorKey) {
+        @if (errorKey !== 'empty') {
+          <p class="error" role="status">{{ i18n.text()[errorKey] }}</p>
+        }
+      }
+      <p class="privacy">{{ i18n.text().privacy }}</p>
+    </section>
+
+    <section class="preview-panel panel" aria-labelledby="preview-title">
+      <div class="no-print">
+        <h2 id="preview-title">{{ i18n.text().preview }}</h2>
+        <p class="muted">{{ i18n.text().previewHint }}</p>
+        <fieldset class="layouts">
+          <legend class="sr-only">{{ i18n.text().printFormat }}</legend>
+          <label [class.selected]="layout() === 'qr'"
+            ><input
+              type="radio"
+              name="layout"
+              value="qr"
+              [checked]="layout() === 'qr'"
+              (change)="layout.set('qr')"
+            />{{ i18n.text().qrOnly }}</label
+          >
+          <label [class.selected]="layout() === 'compact'"
+            ><input
+              type="radio"
+              name="layout"
+              value="compact"
+              [checked]="layout() === 'compact'"
+              (change)="layout.set('compact')"
+            />{{ i18n.text().compact }}</label
+          >
+          <label [class.selected]="layout() === 'large'"
+            ><input
+              type="radio"
+              name="layout"
+              value="large"
+              [checked]="layout() === 'large'"
+              (change)="layout.set('large')"
+            />{{ i18n.text().large }}</label
+          >
+        </fieldset>
+        <p class="size-hint">
+          {{
+            layout() === 'qr'
+              ? i18n.text().qrSize
+              : layout() === 'compact'
+                ? i18n.text().compactSize
+                : i18n.text().largeSize
+          }}
+        </p>
+        <label class="copies-control"
+          >{{ i18n.text().copies }}
+          <input
+            type="number"
+            min="1"
+            [max]="maxCopies"
+            [ngModel]="copies()"
+            (ngModelChange)="updateCopies($event)"
+            name="label-copies"
+          />
+        </label>
+        <p class="size-hint print-plan">
+          {{ i18n.text().a4Capacity.replace('{count}', copiesPerSheet().toString()) }}
+          {{ i18n.text().a4Sheets.replace('{count}', printSheets().length.toString()) }}
+        </p>
+      </div>
+      <div class="preview-stage">
+        @if (label(); as data) {
+          <article
+            class="label-card"
+            [class.qr-only]="layout() === 'qr'"
+            [class.compact]="layout() === 'compact'"
+            [class.large]="layout() === 'large'"
+          >
+            <img class="qr" [src]="data.qrUrl" [alt]="i18n.text().qrAlt" />
+            @if (layout() !== 'qr') {
+              <dl>
+                @for (field of visibleFields(); track $index) {
+                  <div>
+                    <dt>{{ field.key }}</dt>
+                    <dd>{{ field.value }}</dd>
+                  </div>
+                }
+              </dl>
+            }
+          </article>
+        } @else {
+          @if (error() === 'incomplete') {
+            <p class="error preview-validation no-print" role="alert">
+              {{ i18n.text().previewIncomplete }}
+            </p>
+          } @else {
+            <p class="empty-preview no-print">{{ i18n.text().empty }}</p>
+          }
+        }
+      </div>
+      <div class="preview-actions no-print">
+        @if (label(); as data) {
+          <p class="payload-size">{{ data.bytes }} {{ i18n.text().bytes }} · QR / Q</p>
+          @if (data.dense) {
+            <p class="notice">{{ i18n.text().dense }}</p>
+          }
+          @if (layout() !== 'qr') {
+            <p class="size-hint">{{ i18n.text().overflow }}</p>
+          }
+        }
+        <button class="print-button" type="button" [disabled]="!label()" (click)="print()">
+          {{ i18n.text().print }}
+        </button>
+        <p class="size-hint">{{ i18n.text().printHint }}</p>
+        @if (label(); as data) {
+          <details>
+            <summary>{{ i18n.text().payload }}</summary>
+            <pre>{{ data.json }}</pre>
+          </details>
+        }
+      </div>
+    </section>
+  </main>
+  @if (label(); as data) {
+    <section class="print-document">
+      @for (sheet of printSheets(); track $index) {
+        <div
+          class="print-sheet"
+          [class.qr-sheet]="layout() === 'qr'"
+          [class.compact-sheet]="layout() === 'compact'"
+          [class.large-sheet]="layout() === 'large'"
+        >
+          @for (copy of sheet; track $index) {
+            <article
+              class="label-card print-label"
+              [class.qr-only]="layout() === 'qr'"
+              [class.compact]="layout() === 'compact'"
+              [class.large]="layout() === 'large'"
+            >
+              <img class="qr" [src]="data.qrUrl" alt="" />
+              @if (layout() !== 'qr') {
+                <dl>
+                  @for (field of visibleFields(); track $index) {
+                    <div>
+                      <dt>{{ field.key }}</dt>
+                      <dd>{{ field.value }}</dd>
+                    </div>
+                  }
+                </dl>
+              }
+            </article>
+          }
+        </div>
+      }
+    </section>
+  }
+</div>

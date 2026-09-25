@@ -13,7 +13,7 @@ export interface ToolDefinition {
 // Register tools here once they have a runnable URL. Keep implementations in apps/.
 export const tools: readonly ToolDefinition[] = [
   {
-    id: 'pickle-label',
+    id: 'jar-labler',
     category: 'kitchen',
     url: '/tools/kitchen/jar-labler',
     title: {

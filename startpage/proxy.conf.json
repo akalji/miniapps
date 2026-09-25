@@ -1,5 +1,5 @@
 {
-  "/apps/pickle-label": {
+  "/apps/jar-labler": {
     "target": "http://localhost:4201",
     "secure": false,
     "ws": true

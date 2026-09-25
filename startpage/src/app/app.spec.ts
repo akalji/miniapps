@@ -61,7 +61,7 @@ describe('App navigation and localization', () => {
     await fixture.whenStable();
     const root = fixture.nativeElement as HTMLElement;
     expect(root.querySelector('header .brand')?.textContent).toContain('MiniApps');
-    expect(root.querySelector('lib-pickle-label-ui')).not.toBeNull();
+    expect(root.querySelector('lib-jar-labler')).not.toBeNull();
     expect(root.querySelector('.app-header h1')?.textContent).toContain('Этикетки для банок');
     expect(root.querySelector('.app-header select')).toBeNull();
     await router.navigateByUrl('/tools/kitchen');
@@ -85,7 +85,7 @@ describe('App navigation and localization', () => {
       await router.navigateByUrl(oldRoute);
       await fixture.whenStable();
       expect(router.url).toBe('/tools/kitchen/jar-labler');
-      expect(fixture.nativeElement.querySelector('lib-pickle-label-ui')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('lib-jar-labler')).not.toBeNull();
     }
   });
   it('lists registered apps and closes when focus leaves the collection', async () => {

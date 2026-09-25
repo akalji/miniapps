@@ -4,15 +4,15 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const app = resolve(root, 'apps/pickle-label');
+const app = resolve(root, 'apps/jar-labler');
 if (!existsSync(resolve(app, 'node_modules/@angular/cli/bin/ng.js'))) {
-  console.error('Install app dependencies first: npm ci --prefix apps/pickle-label');
+  console.error('Install app dependencies first: npm ci --prefix apps/jar-labler');
   process.exit(1);
 }
 const ng = resolve(app, 'node_modules/@angular/cli/bin/ng.js');
 const libraryBuild = spawnSync(
   process.execPath,
-  [ng, 'build', 'pickle-label-ui', '--configuration', 'development'],
+  [ng, 'build', 'jar-labler-ui', '--configuration', 'development'],
   {
     cwd: app,
     stdio: 'inherit',
@@ -44,7 +44,7 @@ for (const { cwd, executable, args } of [
   {
     cwd: app,
     executable: process.execPath,
-    args: [ng, 'build', 'pickle-label-ui', '--watch', '--configuration', 'development'],
+    args: [ng, 'build', 'jar-labler-ui', '--watch', '--configuration', 'development'],
   },
   {
     cwd: app,
